@@ -1,23 +1,30 @@
 
 import discord, os
 from dotenv import load_dotenv
-
+from discord.ext import commands
 import app
 
 load_dotenv()
 token = os.getenv("dt")
-intents = discord.Intents.default()
+intents = discord. Intents.default() 
 intents.message_content = True
-client = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix='<', intents=intents)
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-    if message.content.startswith('?hola'):
-       await message.channel.send('Hola bienvenido a mi primer bot') 
-    elif message.content.startswith('?contraseña'):
-        x= app.passworsd_generator(25)
-        await message.channel.send(f'Tu contraseña es: {x}')
-        
-client.run(token)
+@bot.event
+async def on_ready():
+    print (f'We have logged in as {bot.user}')
+
+@bot.command()
+async def hello(ctx):
+    await ctx.send(f'Hola, soy un bot {bot.user}!')
+
+@bot.command()
+async def heh(ctx, count_heh = 5):
+    await ctx.send("he"count_heh)
+
+@bot.command(name="psw") 
+async def passwords (ctx, largo=25):
+    data =  app.password_generator(largo)
+    await ctx.send(f"🔏 Contrasenia Generada: {data}")
+
+bot.run(token)
